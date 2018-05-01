@@ -25,7 +25,7 @@ tmpfile=$(mktemp .XXXX_$id )
  ./dicom_from_dir.bash -rhead |sed 's/ $//'
  for d in $rawsubjdir/*/; do 
     # bad dirs will not have 5 fields (study,id,path, dirroot, count); so check the length of the 7th field
-   ./dicom_from_dir.bash $d | awk '( length($7) > 0){print}'
+   ./dicom_from_dir.bash "$d" | awk '( length($7) > 0){print}'
  done
 ) >  $tmpfile
 

@@ -21,11 +21,10 @@ sessionname <- function(rawdirvec) {
 }
 
 d <- 
-  read.table("dicominfo.txt",sep=" ",header=F,comment.char="",quote=NULL,fill=T) %>% 
-# `names<-`(c(n,'junk')) %>%
-# select(-junk) %>% 
- `names<-`(n) %>%
- select(1:length(n)) %>%
+ read.table("dicominfo.txt",sep=" ",header=F,comment.char="",quote=NULL,fill=T) %>% 
+ # remove extra delimter created empty column
+ `names<-`(c(n,'junk')) %>%
+ select(-junk) %>%
  #mutate(session=basename(dirname(dirname(as.character(rawdir))))) %>% 
  #mutate(session=rawdir%>%as.character%>%dirname %>% basename) %>% 
  mutate(session=sessionname(rawdir)) %>% 

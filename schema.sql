@@ -17,6 +17,7 @@ CREATE TABLE visit (
 );
 
 create table analysis (
+     study     varchar(14),
      analysis  varchar(20),
      lunadate  char(14),
      protocol  text,
@@ -34,6 +35,7 @@ create TABLE mrinfo (
     seqno     int,
     ndcm      int,
     
+    patname    text,
     id         text,
     Birthdate  text,
     Sex text,

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
+
 cd $(dirname $0)
+export PATH="$PATH:/opt/ni_tools/afni"
 
 set -e
 MRI_DB=db
@@ -13,13 +15,13 @@ fi
 # where to store old dicominfo.txt
 [ ! -d old ] && mkdir old
 # creates dicominfo.txt, used by import.sql
-[ -r dicominfo.txt ] && mv dicominfo.txt old/$(_stat dicominfo.txt)
+oldfile=old/$(_stat dicominfo.txt)
+[ -r dicominfo.txt ] && mv dicominfo.txt $oldfile && gzip $oldfile
 
 date +%s > timeit
 # get header for all mr scans
 ./getHdr.bash # create dicominfo.txt -- list of all headers
 ./mkSession.R # create dicominfo_session.txt -- used by import.sql
-Rscript -e 'source("funcs.R"); rebuild_populare( src_sqlite("./db"))'
 
 # move to back if it's not empty
 [ -r $MRI_DB -a $(du -m $MRI_DB|awk '{print $1}') -gt 0 ] && mv $MRI_DB $MRI_DB.bak
@@ -35,5 +37,6 @@ sqlite3 $MRI_DB < <(
 )
 date +%s >> timeit
 
+Rscript -e 'source("funcs.R"); rebuild_populare( src_sqlite("./db"))'
 # add analysis to db
 #./redoanalysis.bash

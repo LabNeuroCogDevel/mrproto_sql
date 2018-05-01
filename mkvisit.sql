@@ -1,8 +1,9 @@
+-- lunaid and lunadate will be weird for cog
 insert into visit 
  select
   study,
-  substr(lunadate,1,5) as lunaid,
-  lunadate,
+  substr(patname,1,5) as lunaid,
+  substr(patname,1,14) as lunadate,
   case lunadate 
    when id then null 
    else id 
@@ -14,11 +15,12 @@ insert into visit
    null as dtbz, null as rac, null as pet
  from (
   select
-   min(id) as id,
-   min(lunadate) as lunadate,
-   min(Sex) as Sex,
+   min(id)        as id,
+   max(patname)   as patname,
+   min(lunadate)  as lunadate,
+   min(Sex)       as Sex,
    min(Birthdate) as b,
-   min(Date) as d,
+   min(Date)      as d,
    study
   from mrinfo group by lunadate, study
  );

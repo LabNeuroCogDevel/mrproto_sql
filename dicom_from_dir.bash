@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+
+# used by getstudy.bash
+# like
+# ./dicom_from_dir.bash /Volumes/Phillips/Raw/MRprojects/mMRDA-dev/2015.11.04-08.50.04/Boo81/gre_field_mapping_96x96.8/
+#
+
 source $(dirname $0)/config.bash
 
 # we can explcilty ask for the column names spit out by this script
@@ -18,16 +24,30 @@ if [ "$1" == "-rhead" ]; then
 fi
 
 ## input check
-d=$1
+d="$1"
 [ -z "$d" ]    && echo "$0: given no directory!" >&2 && exit 1
 [ ! -r "$d" ]  && echo "$0: '$d' DNE"            >&2 && exit 1
 
 
-## match lunaid
+## match lunaid/birc/nic in directory name
+
+# 050914155352 BIRC
+# 100908171452 NIC
+# 19999/20001231
 id=""
 [[ "$d" =~ 1[0-9][0-9][0-9][0-9][/_][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9] ]] && id=${BASH_REMATCH//\//_}
-# for CogLong
+
+## for CogLong
 [ -z "$id" ] && [[ "$d" =~ /([0-9]{12})/[0-9]{3} ]] && id=${BASH_REMATCH[1]}
+[ -z "$id" ] && [[ "$d" =~ BIRC/([0-9]{12})/[0-9] ]] && id=${BASH_REMATCH[1]}
+[ -z "$id" ] && [[ "$d" =~ BIRC_from_DVDs/([0-9]{12})/[0-9] ]] && id=${BASH_REMATCH[1]}
+
+## for pet
+
+# special subjects
+[[ "$d" =~ /Boo81 ]] && id=B0081
+[[ "$d" =~ /304-00-0009 ]] && id=B0078
+
 [ -z "$id" ] && [[ "$d" =~ /[Bb]([0-9]{4}) ]] && id=${BASH_REMATCH[1]}
 [ -z "$id" ] && echo "no id in $d!" >&2 && exit 1 
 

@@ -5,6 +5,9 @@ headerfirst(){ sed 's/^ *study/0study/g'| column -t|sort |uniq|sed 's/0study/stu
 # html needs br for line breaks
 addbr(){ sed 's/$/<br>/'; }
 
+# print a stream and error at the end if the stream was empty
+checkempty(){ perl -pse '$l=$_;END{exit 1 if $.<=1 && $l eq "" }'; }
+
 #
 #mailit(){ mail  -a 'Content-Type: text/html' -s "MR report one last time" willforan@gmail.com; } 
 
@@ -27,12 +30,15 @@ report() {
 seenew() { find /Volumes/Phillips/Raw/MRprojects/ -mindepth 3 -maxdepth 3 -type d -ipath '*20[0-9[0-9]*' -and -not -ipath '*/WPC*' -ctime -8 -printf "%c\t%P\n";} 
 
 doit() {
-    report |
-    headerfirst | 
-    addbr | 
-    wrapmono  |
-    mail -a 'Content-Type: text/html' -s "MR report protocol report" lncd_notification@googlegroups.com
+    mailtxt=$(
+      report |
+      headerfirst | 
+      addbr | 
+      wrapmono)
+
+    [ -n "$mailtxt" ] && echo "$mailtxt" | mail -a 'Content-Type: text/html' -s "MR report protocol report" lncd_notification@googlegroups.com
 }
 
-cd $(dirname $0)
-doit
+
+# run if running (not sourcing)
+[ "${BASH_SOURCE}" == $0 ] && cd $(dirname $0) && doit
