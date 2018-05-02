@@ -32,6 +32,7 @@ sqlite3 $MRI_DB < <(
  cat  \
   schema.sql \
   import.sql \
+  manually_fix.sql \
   mksubj.sql \
   mkvisit.sql \
 )
